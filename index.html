@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Finder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Buscador de Pokémon</h1>
+
+  <div id="busqueda" class="search-section">
+    <input type="text" id="searchInput" placeholder="Nombre o ID del Pokémon">
+    <button onclick="buscarPokemon()">Buscar</button>
+  </div>
+
+  <div id="info" class="result-section" style="display: none;">
+    <div id="pokemonInfo"></div>
+    <button onclick="regresar()">Regresar</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

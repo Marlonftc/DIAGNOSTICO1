@@ -7,44 +7,51 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// Default credentials
+const VALID_USER = 'admin';
+const VALID_PASS = '1234';
 
 connectToDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
   });
 });
 
 app.post('/login', async (req, res) => {
-  const { username } = req.body;
+  const { username, password } = req.body;
 
-  if (!username || username.trim() === '') {
-    return res.status(400).json({ error: 'Nombre de usuario requerido' });
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  // Check credentials
+  if (username !== VALID_USER || password !== VALID_PASS) {
+    return res.status(401).json({ error: 'Invalid credentials' });
   }
 
   const db = getDB();
-  const usuarios = db.collection('usuarios');
+  const users = db.collection('usuarios');
 
-  const usuarioExistente = await usuarios.findOne({ usuario: username });
+  const existingUser = await users.findOne({ usuario: username });
 
-  if (usuarioExistente) {
-    // Actualizar ingreso
-    await usuarios.updateOne(
+  if (existingUser) {
+    await users.updateOne(
       { usuario: username },
       {
         $set: { ultimaConexion: new Date() },
         $inc: { numIngresos: 1 }
       }
     );
-    return res.json({ mensaje: 'Bienvenido de nuevo', nuevo: false });
+    return res.json({ message: 'Welcome back', new: false });
   } else {
-    // Insertar nuevo usuario
-    await usuarios.insertOne({
+    await users.insertOne({
       usuario: username,
       fechaRegistro: new Date(),
       ultimaConexion: new Date(),
       numIngresos: 1
     });
-    return res.json({ mensaje: 'Usuario registrado correctamente', nuevo: true });
+    return res.json({ message: 'User registered successfully', new: true });
   }
 });

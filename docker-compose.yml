@@ -2,20 +2,22 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    image: mftc2412/pokemon-backend
     ports:
       - "3000:3000"
     depends_on:
       - mongo
     networks:
       - pokenet
+    restart: always
 
   frontend:
-    build: ./frontend
+    image: mftc2412/pokemon-frontend
     ports:
       - "8080:80"
     networks:
       - pokenet
+    restart: always
 
   mongo:
     image: mongo
@@ -26,6 +28,7 @@ services:
       - mongo_data:/data/db
     networks:
       - pokenet
+    restart: always
 
 volumes:
   mongo_data:

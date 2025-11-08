@@ -1,19 +1,19 @@
 // === Global variables ===
-let listaPokemon = [];
+let pokemonList = [];
 
 // === Load Pokémon names on startup ===
 window.addEventListener('DOMContentLoaded', async () => {
   try {
     const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
     const data = await response.json();
-    listaPokemon = data.results;
+    pokemonList = data.results;
   } catch (error) {
     console.error('Error loading Pokémon list:', error);
   }
 });
 
-// === Login function ===
-async function login() {
+// === Login function (local version, no backend) ===
+function login() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
   const errorP = document.getElementById('loginError');
@@ -23,29 +23,21 @@ async function login() {
     return;
   }
 
-  try {
-    const response = await fetch('http://localhost:3000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
+  // ✅ Fixed credentials (you can change them)
+  const VALID_USER = 'admin';
+  const VALID_PASS = '1234';
 
-    const data = await response.json();
-
-    if (response.ok) {
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('busqueda').style.display = 'block';
-    } else {
-      errorP.textContent = data.error || 'Invalid credentials.';
-    }
-  } catch (error) {
-    errorP.textContent = 'Cannot connect to the server.';
-    console.error(error);
+  if (username === VALID_USER && password === VALID_PASS) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('search').style.display = 'block';
+    errorP.textContent = '';
+  } else {
+    errorP.textContent = 'Invalid credentials.';
   }
 }
 
 // === Search Pokémon by name or ID ===
-async function buscarPokemon() {
+async function searchPokemon() {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const infoDiv = document.getElementById("pokemonInfo");
 
@@ -64,49 +56,49 @@ async function buscarPokemon() {
       <p><strong>Weight:</strong> ${data.weight / 10} kg</p>
     `;
 
-    document.getElementById("busqueda").style.display = "none";
+    document.getElementById("search").style.display = "none";
     document.getElementById("info").style.display = "block";
 
   } catch (error) {
     infoDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
-    document.getElementById("busqueda").style.display = "none";
+    document.getElementById("search").style.display = "none";
     document.getElementById("info").style.display = "block";
   }
 }
 
 // === Go back to login ===
-function regresar() {
+function goBackToLogin() {
   document.getElementById("login").style.display = "block";
-  document.getElementById("busqueda").style.display = "none";
+  document.getElementById("search").style.display = "none";
   document.getElementById("info").style.display = "none";
 
   document.getElementById("username").value = "";
   document.getElementById("password").value = "";
   document.getElementById("searchInput").value = "";
 
-  document.getElementById("resultadoBusqueda").innerHTML = "";
+  document.getElementById("searchResults").innerHTML = "";
   document.getElementById("pokemonInfo").innerHTML = "";
   document.getElementById("loginError").textContent = "";
 }
 
 // === Go back to search view ===
-function regresarABusqueda() {
-  document.getElementById("busqueda").style.display = "block";
+function goBackToSearch() {
+  document.getElementById("search").style.display = "block";
   document.getElementById("info").style.display = "none";
 }
 
 // === Filter Pokémon as user types ===
-async function filtrarPokemon() {
-  const texto = document.getElementById("searchInput").value.toLowerCase();
-  const resultadosDiv = document.getElementById("resultadoBusqueda");
+async function filterPokemon() {
+  const text = document.getElementById("searchInput").value.toLowerCase();
+  const resultsDiv = document.getElementById("searchResults");
 
-  resultadosDiv.innerHTML = "";
+  resultsDiv.innerHTML = "";
 
-  if (texto.length === 0) return;
+  if (text.length === 0) return;
 
-  const resultados = listaPokemon.filter(p => p.name.startsWith(texto)).slice(0, 10);
+  const results = pokemonList.filter(p => p.name.startsWith(text)).slice(0, 10);
 
-  for (let poke of resultados) {
+  for (let poke of results) {
     const response = await fetch(poke.url);
     const data = await response.json();
 
@@ -114,14 +106,14 @@ async function filtrarPokemon() {
     card.innerHTML = `
       <h4>${data.name.toUpperCase()}</h4>
       <img src="${data.sprites.front_default}" alt="${data.name}" />
-      <button onclick="mostrarPokemon('${data.name}')">See more</button>
+      <button onclick="showPokemon('${data.name}')">See more</button>
     `;
-    resultadosDiv.appendChild(card);
+    resultsDiv.appendChild(card);
   }
 }
 
 // === Show detailed Pokémon info ===
-async function mostrarPokemon(nombre) {
-  document.getElementById("searchInput").value = nombre;
-  await buscarPokemon();
+async function showPokemon(name) {
+  document.getElementById("searchInput").value = name;
+  await searchPokemon();
 }

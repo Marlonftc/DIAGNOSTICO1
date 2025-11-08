@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Pokémon Finder</title>
@@ -8,29 +8,28 @@
 <body>
   <h1>Pokémon Finder</h1>
 
-  <!-- LOGIN -->
-  <!-- LOGIN -->
-<div id="login" class="login-section">
-  <input type="text" id="username" placeholder="Ingresa tu nombre de usuario" /><br><br>
-  <input type="password" id="password" placeholder="Ingresa tu contraseña" /><br><br>
-  <button onclick="login()">Ingresar</button>
-  <p id="loginError" class="error"></p>
-</div>
-
-  <!-- BÚSQUEDA -->
-  <div id="busqueda" class="search-section" style="display: none;">
-    <input type="text" id="searchInput" placeholder="Nombre o ID del Pokémon" oninput="filtrarPokemon()" />
-    <div id="resultadoBusqueda"></div>
-    <button onclick="regresar()">Cerrar sesión</button>
+   <!-- LOGIN -->
+  <div id="login" class="login-section">
+    <input type="text" id="username" placeholder="Enter your username" /><br><br>
+    <input type="password" id="password" placeholder="Enter your password" /><br><br>
+    <button onclick="login()">Login</button>
+    <p id="loginError" class="error"></p>
   </div>
 
-  <!-- INFO DETALLADA -->
+  <!-- SEARCH -->
+  <div id="search" class="search-section" style="display: none;">
+    <input type="text" id="searchInput" placeholder="Pokémon name or ID" oninput="filterPokemon()" />
+    <div id="searchResults"></div>
+    <button onclick="goBackToLogin()">Log out</button>
+  </div>
+
+  <!-- DETAILED INFO -->
   <div id="info" class="result-section" style="display: none;">
     <div id="pokemonInfo"></div>
-    <button onclick="regresarABusqueda()">Regresar</button>
+    <button onclick="goBackToSearch()">Go back</button>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
+ 
